@@ -76,7 +76,7 @@ void VideoProcessor::startVideo()
 
             QString text = time_str + QString(" ") + QString::number(fps_calculated, 'f', 1) + QString("FPS");
 
-            cv::putText(frmRGB8, text.toStdString(), cv::Point(10, 20), 2, 0.5, cv::Scalar(0,0,255));
+            cv::putText(frmRGB8, text.toStdString(), cv::Point(10, 20), cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0,0,255));
 
             //Display
             //emit dispay(QPixmap::fromImage(QImage(pSrcBuf, VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_WIDTH * 3, QImage::Format_RGB888).rgbSwapped()));
