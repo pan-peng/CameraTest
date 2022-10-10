@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     capturewindow.cpp \
+    isp.cpp \
     main.cpp \
     mainwindow.cpp \
     video.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     capturewindow.h \
+    isp.h \
     mainwindow.h \
     video.h \
     videoconfig.h \

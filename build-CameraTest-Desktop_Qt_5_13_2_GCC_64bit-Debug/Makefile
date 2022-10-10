@@ -53,6 +53,7 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../CameraTest/capturewindow.cpp \
+		../CameraTest/isp.cpp \
 		../CameraTest/main.cpp \
 		../CameraTest/mainwindow.cpp \
 		../CameraTest/video.cpp \
@@ -62,6 +63,7 @@ SOURCES       = ../CameraTest/capturewindow.cpp \
 		moc_mainwindow.cpp \
 		moc_videoprocessor.cpp
 OBJECTS       = capturewindow.o \
+		isp.o \
 		main.o \
 		mainwindow.o \
 		video.o \
@@ -268,12 +270,14 @@ DIST          = /opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/features/lex.prf \
 		../CameraTest/CameraTest.pro ../CameraTest/capturewindow.h \
+		../CameraTest/isp.h \
 		../CameraTest/mainwindow.h \
 		../CameraTest/video.h \
 		../CameraTest/videoconfig.h \
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
 		../CameraTest/videoprocessor.h ../CameraTest/capturewindow.cpp \
+		../CameraTest/isp.cpp \
 		../CameraTest/main.cpp \
 		../CameraTest/mainwindow.cpp \
 		../CameraTest/video.cpp \
@@ -701,8 +705,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../CameraTest/capturewindow.h ../CameraTest/mainwindow.h ../CameraTest/video.h ../CameraTest/videoconfig.h ../CameraTest/videoconverter.h ../CameraTest/videoflip.h ../CameraTest/videoprocessor.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../CameraTest/capturewindow.cpp ../CameraTest/main.cpp ../CameraTest/mainwindow.cpp ../CameraTest/video.cpp ../CameraTest/videoconverter.cpp ../CameraTest/videoflip.cpp ../CameraTest/videoprocessor.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../CameraTest/capturewindow.h ../CameraTest/isp.h ../CameraTest/mainwindow.h ../CameraTest/video.h ../CameraTest/videoconfig.h ../CameraTest/videoconverter.h ../CameraTest/videoflip.h ../CameraTest/videoprocessor.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../CameraTest/capturewindow.cpp ../CameraTest/isp.cpp ../CameraTest/main.cpp ../CameraTest/mainwindow.cpp ../CameraTest/video.cpp ../CameraTest/videoconverter.cpp ../CameraTest/videoflip.cpp ../CameraTest/videoprocessor.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../CameraTest/capturewindow.ui ../CameraTest/mainwindow.ui $(DISTDIR)/
 
 
@@ -1441,6 +1445,108 @@ capturewindow.o: ../CameraTest/capturewindow.cpp ../CameraTest/capturewindow.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qinputmethod.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o capturewindow.o ../CameraTest/capturewindow.cpp
 
+isp.o: ../CameraTest/isp.cpp ../CameraTest/isp.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/opencv.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/opencv_modules.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cvdef.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/cvconfig.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/hal/interface.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cv_cpu_dispatch.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cv_cpu_helper.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/fast_math.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/version.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/base.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cvstd.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cvstd_wrapper.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/neon_utils.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/vsx_utils.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/check.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/traits.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/matx.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/saturate.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/types.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/mat.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/bufferpool.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/mat.inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/persistence.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/operations.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cvstd.inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/utility.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/optim.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/ovx.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/calib3d.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/features2d.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/miniflann.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/defines.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/config.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/affine.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn/dnn.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/async.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn/version.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn/dict.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn/layer.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn/dnn.inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/dnn/utils/inference_engine.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/flann_base.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/general.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/matrix.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/params.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/any.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/saving.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/nn_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/result_set.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/all_indices.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/kdtree_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/dynamic_bitset.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/dist.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/heap.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/allocator.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/random.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/kdtree_single_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/kmeans_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/logger.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/composite_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/linear_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/hierarchical_clustering_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/lsh_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/lsh_table.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/autotuned_index.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/ground_truth.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/index_testing.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/timer.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/flann/sampling.h \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/highgui.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/imgcodecs.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/videoio.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/imgproc.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/ml.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/ml/ml.inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/objdetect.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/objdetect/detection_based_tracker.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/photo.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/warpers.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/warpers.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cuda.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cuda_types.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/core/cuda.inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/warpers_inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/matchers.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/util.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/util_inl.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/camera.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/exposure_compensate.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/seam_finders.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/stitching/detail/blenders.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/video.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/video/tracking.hpp \
+		/opt/opencv-4.1.1/include/opencv4/opencv2/video/background_segm.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o isp.o ../CameraTest/isp.cpp
+
 main.o: ../CameraTest/main.cpp ../CameraTest/mainwindow.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -1915,6 +2021,14 @@ mainwindow.o: ../CameraTest/mainwindow.cpp ../CameraTest/mainwindow.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qguiapplication.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qinputmethod.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QGroupBox \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qgroupbox.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextoption.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QMenuBar \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmenubar.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmenu.h \
@@ -2154,7 +2268,9 @@ videoprocessor.o: ../CameraTest/videoprocessor.cpp ../CameraTest/videoprocessor.
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDebug \
-		../CameraTest/videoconfig.h
+		../CameraTest/videoconfig.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDateTime \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qdatetime.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o videoprocessor.o ../CameraTest/videoprocessor.cpp
 
 moc_capturewindow.o: moc_capturewindow.cpp 

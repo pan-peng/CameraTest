@@ -12,15 +12,17 @@ VideoProcessor::VideoProcessor()
     pVideo = new Video();
     pVideoConverter = new VideoConverter();
     pVideoFlip = new VideoFlip();
+    pIsp = new Isp();
 
     frmBayer16.create(VIDEO_OUT_HEIGHT, VIDEO_OUT_WIDTH, CV_16UC1);
     frmRGB16.create(VIDEO_OUT_HEIGHT, VIDEO_OUT_WIDTH, CV_16UC3);
     frmRGB8.create(VIDEO_OUT_HEIGHT, VIDEO_OUT_WIDTH, CV_8UC3);
 
     pSrcBuf = new unsigned char [VIDEO_IN_WIDTH * VIDEO_IN_HEIGHT * VIDEO_IN_COLOR_DEPTH / 8];
-    pDestBuf = new unsigned char [VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT * 2];
+    pDestBuf16 = new unsigned short [VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT];
+    pDestBuf8 = new unsigned char [VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT * 2];
 
-    if (pVideo->Open("/dev/video0", VIDEO_IN_WIDTH, VIDEO_IN_HEIGHT, VIDEO_IN_FMT) != 0)
+    if (pVideo->Open("/dev/video2", VIDEO_IN_WIDTH, VIDEO_IN_HEIGHT, VIDEO_IN_FMT) != 0)
     {
         qDebug() << "Video open failed!";
     }
@@ -36,13 +38,17 @@ VideoProcessor::~VideoProcessor()
     frmRGB8.release();
 
     delete [] pSrcBuf;
-    delete [] pDestBuf;
+    delete [] pDestBuf16;
+    delete [] pDestBuf8;
 }
 
 void VideoProcessor::startVideo()
 {
     double fps_calculated;
     cv::TickMeter ticks;
+    unsigned int frameSize;
+
+    frameSize = VIDEO_IN_WIDTH * VIDEO_IN_HEIGHT * VIDEO_IN_COLOR_DEPTH / 8;
 
     stopped = false;
 
@@ -53,12 +59,14 @@ void VideoProcessor::startVideo()
         pause.lock();
 
         ticks.start();
-        if (pVideo->Capture(pSrcBuf, VIDEO_IN_WIDTH * VIDEO_IN_HEIGHT * VIDEO_IN_COLOR_DEPTH / 8) == 0)
+        if (pVideo->Capture(pSrcBuf, frameSize) == 0)
         {
             //Porcess
-            dataConvertForYUYV(pSrcBuf, pDestBuf, VIDEO_IN_WIDTH * VIDEO_IN_HEIGHT * VIDEO_IN_COLOR_DEPTH / 8);
+            dataConvertForYUYV(pSrcBuf, pDestBuf16, frameSize);
 
-            memcpy(frmBayer16.data, pDestBuf, VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT * 2);
+            int2Byte(pDestBuf16, pDestBuf8, VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT);
+
+            memcpy(frmBayer16.data, pDestBuf8, VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT * 2);
 
             cv::cvtColor(frmBayer16, frmRGB16, cv::COLOR_BayerRG2BGR);  //BGGR
 
@@ -79,7 +87,7 @@ void VideoProcessor::startVideo()
             cv::putText(frmRGB8, text.toStdString(), cv::Point(10, 20), cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(0,0,255));
 
             //Display
-            //emit dispay(QPixmap::fromImage(QImage(pSrcBuf, VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_WIDTH * 3, QImage::Format_RGB888).rgbSwapped()));
+            //emit dispay(QPixmap::fromImage(QImage(pSrcBuf, VIDEO_OUT_WIDTH, VIDEO_OUT_HEIGHT, VIDEO_OUT_WIDTH * 3, QImage::Format_RGB888).rgbSwapped()));
             emit dispay(QPixmap::fromImage(QImage(frmRGB8.data, frmRGB8.cols, frmRGB8.rows, static_cast<int>(frmRGB8.step), QImage::Format_RGB888).rgbSwapped()));
         }
         else
@@ -118,53 +126,53 @@ void VideoProcessor::resumeVideo()
     paused = false;
 }
 
-void VideoProcessor::dataConvertForYUYV(const unsigned char *pSrcBuf, unsigned char *pDestBuf, unsigned int length)
+void VideoProcessor::dataConvertForYUYV(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length)
 {
     unsigned int i = 0;
-    unsigned int j = 0;
-    unsigned short temp0 = 0;
-    unsigned short temp1 = 0;
-    unsigned short temp2 = 0;
-    unsigned short temp3 = 0;
 
-    if ((pSrcBuf == nullptr) || (pSrcBuf == nullptr) || (length == 0))
+    if ((pSrcBuf == nullptr) || (pDestBuf == nullptr) || (length == 0))
     {
         return ;
     }
 
-    for (i = 0; i < length; i += 5, j += 8)
+    for (i = 0; i < length; i += 5)
     {
-        temp0 = static_cast<unsigned short>((pSrcBuf[i] << 2) | ((pSrcBuf[i + 4] & 0xc0) >> 6));
-        temp1 = static_cast<unsigned short>((pSrcBuf[i + 1] << 2) | ((pSrcBuf[i + 4] & 0x30) >> 4));
-        temp2 = static_cast<unsigned short>((pSrcBuf[i + 2] << 2) | ((pSrcBuf[i + 4] & 0x0c) >> 2));
-        temp3 = static_cast<unsigned short>((pSrcBuf[i + 3] << 2) | (pSrcBuf[i + 4] & 0x03));
-
-        pDestBuf[j] = static_cast<unsigned char>((temp0 >> 8) & 0xff);
-        pDestBuf[j + 1] = static_cast<unsigned char>(temp0 & 0xff);
-        pDestBuf[j + 2] = static_cast<unsigned char>((temp1 >> 8) & 0xff);
-        pDestBuf[j + 3] = static_cast<unsigned char>(temp1 & 0xff);
-        pDestBuf[j + 4] = static_cast<unsigned char>((temp2 >> 8) & 0xff);
-        pDestBuf[j + 5] = static_cast<unsigned char>(temp2 & 0xff);
-        pDestBuf[j + 6] = static_cast<unsigned char>((temp3 >> 8) & 0xff);
-        pDestBuf[j + 7] = static_cast<unsigned char>(temp3 & 0xff);
+        pDestBuf[i * 4 / 5] = static_cast<unsigned short>((pSrcBuf[i] << 2) | (pSrcBuf[i + 4] & 0x03));
+        pDestBuf[i * 4 / 5 + 1] = static_cast<unsigned short>((pSrcBuf[i + 1] << 2) | ((pSrcBuf[i + 4] & 0x0c) >> 2));
+        pDestBuf[i * 4 / 5 + 2] = static_cast<unsigned short>((pSrcBuf[i + 2] << 2) | ((pSrcBuf[i + 4] & 0x30) >> 4));
+        pDestBuf[i * 4 / 5 + 3] = static_cast<unsigned short>((pSrcBuf[i + 3] << 2) | ((pSrcBuf[i + 4] & 0xc0) >> 6));
     }
 }
 
-void VideoProcessor::dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned char *pDestBuf, unsigned int length)
+void VideoProcessor::dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length)
 {
     unsigned int i = 0;
-    unsigned int j = 0;
 
-    if ((pSrcBuf == nullptr) || (pSrcBuf == nullptr) || (length == 0))
+    if ((pSrcBuf == nullptr) || (pDestBuf == nullptr) || (length == 0))
     {
         return ;
     }
 
-    for (i = 0; i < length; i += 2, j += 2)
+    for (i = 0; i < length; i++)
     {
-        pDestBuf[j] = pSrcBuf[i + 1];
-        pDestBuf[j + 1] = pSrcBuf[i];
+        pDestBuf[i] = pSrcBuf[i * 2 + 1];  //Swap byte order
+        pDestBuf[i + 1] = pSrcBuf[i * 2];
     }
 }
 
+void VideoProcessor::int2Byte(const unsigned short *pSrcBuf, unsigned char *pDestBuf, unsigned int length)
+{
+    unsigned int i = 0;
+
+    if ((pSrcBuf == nullptr) || (pDestBuf == nullptr) || (length == 0))
+    {
+        return ;
+    }
+
+    for (i = 0; i < length; i++)
+    {
+        pDestBuf[i * 2] = static_cast<unsigned char>((pSrcBuf[i] >> 8) & 0xff);
+        pDestBuf[i * 2 + 1] = static_cast<unsigned char>(pSrcBuf[i] & 0xff);
+    }
+}
 

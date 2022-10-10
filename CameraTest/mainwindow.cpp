@@ -79,3 +79,28 @@ void MainWindow::on_btnPause_clicked()
         pProcessor->pauseVideo();
     }
 }
+
+void MainWindow::on_btnSet_clicked()
+{
+    int gain = 0;
+    int exposure = 0;
+    unsigned int frame_rate = 0;
+
+    gain = ui->leGain->text().toInt();
+    exposure = ui->leExp->text().toInt();
+    frame_rate = ui->leFPS->text().toUInt();
+
+    if (pProcessor->pVideo->SetGain(gain) == -1)
+    {
+        qDebug() << "Set gain failed.";
+    }
+    if (pProcessor->pVideo->SetExposure(exposure) == -1)
+    {
+        qDebug() << "Set exposure failed.";
+    }
+    if (pProcessor->pVideo->SetFrameRate(frame_rate) == -1)
+    {
+        qDebug() << "Set frame rate failed.";
+    }
+
+}

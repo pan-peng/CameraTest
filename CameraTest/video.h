@@ -14,6 +14,7 @@
 #include <string.h>
 #include <linux/fb.h>
 #include <memory.h>
+#include <errno.h>
 
 
 class Video
@@ -35,6 +36,7 @@ public:
     int Stop(void);
     int Capture(unsigned char *pBuf, unsigned int frame_size);
     int Close(void);
+    int Xioctl(int fd, unsigned long int request, void *arg);
     int SetGain(int gain);
     int SetExposure(int exposure);
     int SetFrameRate(unsigned int frame_rate);

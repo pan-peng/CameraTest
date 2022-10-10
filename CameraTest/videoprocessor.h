@@ -11,6 +11,7 @@
 #include "video.h"
 #include "videoconverter.h"
 #include "videoflip.h"
+#include "isp.h"
 
 
 class VideoProcessor : public QObject
@@ -34,22 +35,29 @@ public:
     void pauseVideo(void);
     void resumeVideo(void);
 
-private:
+public:
     Video *pVideo;
     VideoConverter *pVideoConverter;
     VideoFlip *pVideoFlip;
+    Isp *pIsp;
+
+private:
+
     cv::Mat frmBayer16;
     cv::Mat frmRGB16;
     cv::Mat frmRGB8;
     bool stopped;
     unsigned char *pSrcBuf;
-    unsigned char *pDestBuf;
+    unsigned short *pDestBuf16;
+    unsigned char *pDestBuf8;
     QMutex pause;
     bool paused;
 
 private:
-    void dataConvertForYUYV(const unsigned char *pSrcBuf, unsigned char *pDestBuf, unsigned int length);
-    void dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned char *pDestBuf, unsigned int length);
+    void dataConvertForYUYV(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length);
+    void dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length);
+
+    void int2Byte(const unsigned short *pSrcBuf, unsigned char *pDestBuf, unsigned int length);
 };
 
 

@@ -51,7 +51,7 @@ int Video::Open(const char *dev, unsigned int width, unsigned int height, unsign
 
     //Get video cap
     memset(&cap, 0, sizeof(cap));
-    ret = ioctl(fd, VIDIOC_QUERYCAP, &cap);
+    ret = Xioctl(fd, VIDIOC_QUERYCAP, &cap);
     if (ret < 0)
     {
         perror("Get video cap failed!\n");
@@ -72,11 +72,11 @@ int Video::Open(const char *dev, unsigned int width, unsigned int height, unsign
     memset(&supportSizes, 0, sizeof(supportSizes));
     video_info.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     video_info.index = 0;
-    while (ioctl(fd, VIDIOC_ENUM_FMT, &video_info) != -1)
+    while (Xioctl(fd, VIDIOC_ENUM_FMT, &video_info) != -1)
     {
         supportSizes.pixel_format = video_info.pixelformat;
         supportSizes.index = 0;
-        while (ioctl(fd, VIDIOC_ENUM_FRAMESIZES, &supportSizes) != -1)
+        while (Xioctl(fd, VIDIOC_ENUM_FRAMESIZES, &supportSizes) != -1)
         {
             printf("Video index:%d,format:%s,size with:%d,height:%d\n", video_info.index, video_info.description, supportSizes.discrete.width, supportSizes.discrete.height);
             p = static_cast<unsigned char *>(static_cast<void *>(&video_info.pixelformat));
@@ -93,7 +93,7 @@ int Video::Open(const char *dev, unsigned int width, unsigned int height, unsign
     video_fmt.fmt.pix.height = height;
     video_fmt.fmt.pix.pixelformat = pixel_format;
     video_fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
-    ret = ioctl(fd, VIDIOC_S_FMT, &video_fmt);
+    ret = Xioctl(fd, VIDIOC_S_FMT, &video_fmt);
     if (ret < 0)
     {
         perror("Set video format failed!\n");
@@ -104,7 +104,7 @@ int Video::Open(const char *dev, unsigned int width, unsigned int height, unsign
     reqbuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     reqbuffer.count = count;
     reqbuffer.memory = V4L2_MEMORY_MMAP;
-    ret = ioctl(fd, VIDIOC_REQBUFS, &reqbuffer);
+    ret = Xioctl(fd, VIDIOC_REQBUFS, &reqbuffer);
     if (ret < 0)
     {
         perror("Request video queue buf failed!\n");
@@ -117,7 +117,7 @@ int Video::Open(const char *dev, unsigned int width, unsigned int height, unsign
     for (i = 0; i < count; i++)
     {
         mapbuffer.index = i;
-        ret = ioctl(fd, VIDIOC_QUERYBUF, &mapbuffer);
+        ret = Xioctl(fd, VIDIOC_QUERYBUF, &mapbuffer);
         if (ret < 0)
         {
             perror("Kernel query buf failed!\n");
@@ -125,7 +125,7 @@ int Video::Open(const char *dev, unsigned int width, unsigned int height, unsign
         }
         pMem[i] = static_cast<unsigned char *>(mmap(nullptr, mapbuffer.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, mapbuffer.m.offset));
         pLength[i] = mapbuffer.length;
-        ret = ioctl(fd, VIDIOC_QBUF, &mapbuffer);
+        ret = Xioctl(fd, VIDIOC_QBUF, &mapbuffer);
         if (ret < 0)
         {
             perror("Video put buffer failed!\n");
@@ -141,7 +141,7 @@ int Video::Start(void)
 {
     int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    return ioctl(fd, VIDIOC_STREAMON, &type);
+    return Xioctl(fd, VIDIOC_STREAMON, &type);
 }
 
 
@@ -149,7 +149,7 @@ int Video::Stop(void)
 {
     int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    return ioctl(fd, VIDIOC_STREAMOFF, &type);
+    return Xioctl(fd, VIDIOC_STREAMOFF, &type);
 }
 
 
@@ -164,7 +164,7 @@ int Video::Capture(unsigned char *pBuf, unsigned int frame_size)
     }
 
     readbuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    ret = ioctl(fd, VIDIOC_DQBUF, &readbuffer);
+    ret = Xioctl(fd, VIDIOC_DQBUF, &readbuffer);
     if (ret < 0)
     {
         perror("Video get buffer failed!\n");
@@ -173,7 +173,7 @@ int Video::Capture(unsigned char *pBuf, unsigned int frame_size)
 
     memcpy(pBuf, pMem[readbuffer.index], frame_size);
 
-    ret = ioctl(fd, VIDIOC_QBUF, &readbuffer);
+    ret = Xioctl(fd, VIDIOC_QBUF, &readbuffer);
     if (ret < 0)
     {
         perror("Video put buffer failed!\n");
@@ -197,6 +197,17 @@ int Video::Close(void)
     return close(fd);
 }
 
+int Video::Xioctl(int fd, unsigned long int request, void *arg)
+{
+    int r;
+
+    do
+    {
+        r = ioctl (fd, request, arg);
+    }while ((-1 == r) && (EINTR == errno));
+
+    return r;
+}
 
 int Video::SetGain(int gain)
 {
@@ -206,7 +217,7 @@ int Video::SetGain(int gain)
     ctrl.id = V4L2_CID_GAIN;
     ctrl.value = gain;
 
-    return ioctl(fd, VIDIOC_S_CTRL, &ctrl);
+    return Xioctl(fd, VIDIOC_S_CTRL, &ctrl);
 }
 
 
@@ -218,7 +229,7 @@ int Video::SetExposure(int exposure)
     ctrl.id = V4L2_CID_EXPOSURE;
     ctrl.value = exposure;
 
-    return ioctl(fd, VIDIOC_S_CTRL, &ctrl);
+    return Xioctl(fd, VIDIOC_S_CTRL, &ctrl);
 }
 
 
@@ -231,6 +242,6 @@ int Video::SetFrameRate(unsigned int frame_rate)
     stream_param.parm.capture.timeperframe.numerator = 1;
     stream_param.parm.capture.timeperframe.denominator = frame_rate;
 
-    return ioctl(fd, VIDIOC_S_PARM, &stream_param);
+    return Xioctl(fd, VIDIOC_S_PARM, &stream_param);
 }
 
