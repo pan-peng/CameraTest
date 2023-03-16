@@ -22,7 +22,7 @@ VideoProcessor::VideoProcessor()
     pDestBuf16 = new unsigned short [VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT];
     pDestBuf8 = new unsigned char [VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT * 2];
 
-    if (pVideo->Open("/dev/video2", VIDEO_IN_WIDTH, VIDEO_IN_HEIGHT, VIDEO_IN_FMT) != 0)
+    if (pVideo->Open("/dev/video0", VIDEO_IN_WIDTH, VIDEO_IN_HEIGHT, VIDEO_IN_FMT) != 0)
     {
         qDebug() << "Video open failed!";
     }
@@ -69,6 +69,7 @@ void VideoProcessor::startVideo()
             memcpy(frmBayer16.data, pDestBuf8, VIDEO_OUT_WIDTH * VIDEO_OUT_HEIGHT * 2);
 
             cv::cvtColor(frmBayer16, frmRGB16, cv::COLOR_BayerRG2BGR);  //BGGR
+            //cv::demosaicing(frmBayer16, frmRGB16, cv::COLOR_BayerRG2BGR);  //BGGR
 
             cv::resize(frmRGB16, frmRGB16, cv::Size(VIDEO_OUT_WIDTH, VIDEO_OUT_HEIGHT));
 
@@ -138,15 +139,32 @@ void VideoProcessor::dataConvertForYUYV(const unsigned char *pSrcBuf, unsigned s
     for (i = 0; i < length; i += 5)
     {
         pDestBuf[i * 4 / 5] = static_cast<unsigned short>((pSrcBuf[i] << 2) | (pSrcBuf[i + 4] & 0x03));
+        if (pDestBuf[i * 4 / 5] > VIDEO_PIXEL_MAX_VALUE)
+        {
+            pDestBuf[i * 4 / 5] = VIDEO_PIXEL_MAX_VALUE;
+        }
         pDestBuf[i * 4 / 5 + 1] = static_cast<unsigned short>((pSrcBuf[i + 1] << 2) | ((pSrcBuf[i + 4] & 0x0c) >> 2));
+        if (pDestBuf[i * 4 / 5 + 1] > VIDEO_PIXEL_MAX_VALUE)
+        {
+            pDestBuf[i * 4 / 5 + 1] = VIDEO_PIXEL_MAX_VALUE;
+        }
         pDestBuf[i * 4 / 5 + 2] = static_cast<unsigned short>((pSrcBuf[i + 2] << 2) | ((pSrcBuf[i + 4] & 0x30) >> 4));
+        if (pDestBuf[i * 4 / 5 + 2] > VIDEO_PIXEL_MAX_VALUE)
+        {
+            pDestBuf[i * 4 / 5 + 2] = VIDEO_PIXEL_MAX_VALUE;
+        }
         pDestBuf[i * 4 / 5 + 3] = static_cast<unsigned short>((pSrcBuf[i + 3] << 2) | ((pSrcBuf[i + 4] & 0xc0) >> 6));
+        if (pDestBuf[i * 4 / 5 + 3] > VIDEO_PIXEL_MAX_VALUE)
+        {
+            pDestBuf[i * 4 / 5 + 3] = VIDEO_PIXEL_MAX_VALUE;
+        }
     }
 }
 
-void VideoProcessor::dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length)
+void VideoProcessor::dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned char *pDestBuf, unsigned int length)
 {
     unsigned int i = 0;
+    unsigned short temp = 0;
 
     if ((pSrcBuf == nullptr) || (pDestBuf == nullptr) || (length == 0))
     {
@@ -157,6 +175,13 @@ void VideoProcessor::dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned 
     {
         pDestBuf[i] = pSrcBuf[i * 2 + 1];  //Swap byte order
         pDestBuf[i + 1] = pSrcBuf[i * 2];
+        temp = static_cast<unsigned short>(pDestBuf[i] << 8 | pDestBuf[i + 1]);
+        if (temp > VIDEO_PIXEL_MAX_VALUE)
+        {
+            temp = VIDEO_PIXEL_MAX_VALUE;
+            pDestBuf[i] = static_cast<unsigned char>((temp >> 8) & 0xff);
+            pDestBuf[i + 1] = static_cast<unsigned char>(temp & 0xff);
+        }
     }
 }
 

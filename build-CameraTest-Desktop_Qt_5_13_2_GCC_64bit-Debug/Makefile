@@ -1082,6 +1082,7 @@ moc_mainwindow.cpp: ../CameraTest/mainwindow.h \
 		../CameraTest/video.h \
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
+		../CameraTest/isp.h \
 		moc_predefs.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/bin/moc
 	/opt/Qt5.13.2/5.13.2/gcc_64/bin/moc $(DEFINES) --include /home/proxinse/Projects/CameraTest/build-CameraTest-Desktop_Qt_5_13_2_GCC_64bit-Debug/moc_predefs.h -I/opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/linux-g++ -I/home/proxinse/Projects/CameraTest/CameraTest -I/opt/opencv-4.1.1/include -I/opt/opencv-4.1.1/include/opencv4 -I/opt/opencv-4.1.1/include/opencv4/opencv2 -I/opt/Qt5.13.2/5.13.2/gcc_64/include -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../CameraTest/mainwindow.h -o moc_mainwindow.cpp
@@ -1297,6 +1298,7 @@ moc_videoprocessor.cpp: ../CameraTest/videoprocessor.h \
 		../CameraTest/video.h \
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
+		../CameraTest/isp.h \
 		moc_predefs.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/bin/moc
 	/opt/Qt5.13.2/5.13.2/gcc_64/bin/moc $(DEFINES) --include /home/proxinse/Projects/CameraTest/build-CameraTest-Desktop_Qt_5_13_2_GCC_64bit-Debug/moc_predefs.h -I/opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/linux-g++ -I/home/proxinse/Projects/CameraTest/CameraTest -I/opt/opencv-4.1.1/include -I/opt/opencv-4.1.1/include/opencv4 -I/opt/opencv-4.1.1/include/opencv4/opencv2 -I/opt/Qt5.13.2/5.13.2/gcc_64/include -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../CameraTest/videoprocessor.h -o moc_videoprocessor.cpp
@@ -1434,15 +1436,7 @@ capturewindow.o: ../CameraTest/capturewindow.cpp ../CameraTest/capturewindow.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QLabel \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlabel.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qframe.h \
-		ui_capturewindow.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QVariant \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QApplication \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qapplication.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qcoreapplication.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qguiapplication.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qinputmethod.h
+		ui_capturewindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o capturewindow.o ../CameraTest/capturewindow.cpp
 
 isp.o: ../CameraTest/isp.cpp ../CameraTest/isp.h \
@@ -1775,6 +1769,7 @@ main.o: ../CameraTest/main.cpp ../CameraTest/mainwindow.h \
 		../CameraTest/video.h \
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
+		../CameraTest/isp.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QApplication \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qcoreapplication.h \
@@ -2012,34 +2007,8 @@ mainwindow.o: ../CameraTest/mainwindow.cpp ../CameraTest/mainwindow.h \
 		../CameraTest/video.h \
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
+		../CameraTest/isp.h \
 		ui_mainwindow.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QVariant \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QApplication \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qapplication.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qcoreapplication.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qguiapplication.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qinputmethod.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QGroupBox \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qgroupbox.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QLineEdit \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlineedit.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextcursor.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextformat.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qpen.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextoption.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QMenuBar \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmenubar.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmenu.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qaction.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qactiongroup.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QPushButton \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qpushbutton.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qabstractbutton.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QStatusBar \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qstatusbar.h \
-		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QWidget \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QFile \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDebug \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QThread \
@@ -2267,6 +2236,7 @@ videoprocessor.o: ../CameraTest/videoprocessor.cpp ../CameraTest/videoprocessor.
 		../CameraTest/video.h \
 		../CameraTest/videoconverter.h \
 		../CameraTest/videoflip.h \
+		../CameraTest/isp.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDebug \
 		../CameraTest/videoconfig.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDateTime \

@@ -55,7 +55,7 @@ private:
 
 private:
     void dataConvertForYUYV(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length);
-    void dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned short *pDestBuf, unsigned int length);
+    void dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned char *pDestBuf, unsigned int length);
 
     void int2Byte(const unsigned short *pSrcBuf, unsigned char *pDestBuf, unsigned int length);
 };
