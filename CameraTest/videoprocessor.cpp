@@ -173,15 +173,13 @@ void VideoProcessor::dataConvertForRaw10(const unsigned char *pSrcBuf, unsigned 
 
     for (i = 0; i < length; i++)
     {
-        pDestBuf[i] = pSrcBuf[i * 2 + 1];  //Swap byte order
-        pDestBuf[i + 1] = pSrcBuf[i * 2];
-        temp = static_cast<unsigned short>(pDestBuf[i] << 8 | pDestBuf[i + 1]);
+        temp = static_cast<unsigned short>((pSrcBuf[i * 2 + 1] << 8) | pSrcBuf[i * 2]);  //Swap byte order
         if (temp > VIDEO_PIXEL_MAX_VALUE)
         {
             temp = VIDEO_PIXEL_MAX_VALUE;
-            pDestBuf[i] = static_cast<unsigned char>((temp >> 8) & 0xff);
-            pDestBuf[i + 1] = static_cast<unsigned char>(temp & 0xff);
         }
+        pDestBuf[i] = static_cast<unsigned char>((temp >> 8) & 0xff);
+        pDestBuf[i + 1] = static_cast<unsigned char>(temp & 0xff);
     }
 }
 
